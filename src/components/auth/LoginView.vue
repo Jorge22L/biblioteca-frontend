@@ -5,7 +5,14 @@ import { useAuth } from '@/composables/useAuth'
 const appName = import.meta.env.VITE_APP_NAME
 
 // Usar el composable de autenticación
-const { login, isLoading, error: authError, isAuthenticated } = useAuth()
+const { login, estaCargando, error: authError, estaAutenticado } = useAuth()
+
+// Agregar después de usar useAuth()
+console.log('🔍 LoginView: Estado inicial -', {
+  estaAutenticado: estaAutenticado.value,
+  estaCargando: estaCargando.value,
+  error: authError.value
+})
 
 const emit = defineEmits<{
   'login-success': []
@@ -19,9 +26,9 @@ const form = reactive({
 const error = ref<string>('')
 
 // Watch para detectar cuando la autenticación cambia a true
-watch(isAuthenticated, (newValue) => {
+watch(estaAutenticado, (newValue) => {
   if (newValue) {
-    console.log('✅ Login exitoso - Redirigiendo...')
+    console.log('Login exitoso - Redirigiendo...')
     emit('login-success')
   }
 })
@@ -29,7 +36,7 @@ watch(isAuthenticated, (newValue) => {
 const handleSubmit = async () => {
   error.value = ''
 
-  console.log('🔐 Intentando login...', { email: form.email })
+  console.log('Intentando login...', { email: form.email })
 
   const success = await login({
     email: form.email,
@@ -37,11 +44,11 @@ const handleSubmit = async () => {
   })
 
   if (success) {
-    console.log('✅ Login procesado exitosamente')
+    console.log('Login procesado exitosamente')
     // El watch se encargará de emitir el evento cuando isAuthenticated cambie
   } else {
     error.value = authError.value || 'Error al iniciar sesión'
-    console.error('❌ Error en login:', error.value)
+    console.error('Error en login:', error.value)
   }
 }
 </script>
@@ -66,7 +73,7 @@ const handleSubmit = async () => {
               required
               class="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10"
               placeholder="Correo electrónico"
-              :disabled="isLoading"
+              :disabled="estaCargando"
             />
           </div>
           <div>
@@ -80,7 +87,7 @@ const handleSubmit = async () => {
               required
               class="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10"
               placeholder="Contraseña"
-              :disabled="isLoading"
+              :disabled="estaCargando"
             />
           </div>
         </div>
@@ -93,10 +100,10 @@ const handleSubmit = async () => {
         <div>
           <button
             type="submit"
-            :disabled="isLoading"
+            :disabled="estaCargando"
             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
           >
-            <span v-if="isLoading" class="flex items-center">
+            <span v-if="estaCargando" class="flex items-center">
               <div
                 class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
               ></div>

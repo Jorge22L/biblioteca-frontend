@@ -1,89 +1,87 @@
 import { authService } from '@/services/authService'
-import type { LoginCredentials } from '@/types/auth'
-import { computed, onMounted, ref } from 'vue'
+import type { LoginCredentials, Usuario } from '@/types/auth'
+import { computed, ref } from 'vue'
 
 export const useAuth = () => {
   // Estado reactivo
-  const currentUser = ref<User | null>(null)
-  const authStatus = ref<'idle' | 'checking' | 'autenticado' | 'no autenticado'>('idle')
+  const usuarioActual = ref<Usuario | null>(null)
+  const estadoAuth = ref<'inactivo' | 'verificando' | 'autenticado' | 'no autenticado'>('inactivo')
   const error = ref<string | null>(null)
 
   // Computed
-  const isAuthenticated = computed(() => authStatus.value === 'autenticado')
-  const isLoading = computed(() => authStatus.value === 'checking')
+  const estaAutenticado = computed(() => estadoAuth.value === 'autenticado')
+  const estaCargando = computed(() => estadoAuth.value === 'verificando')
 
   // Métodos
-
-  const initializeAuth = async (): Promise<void> => {
-    authStatus.value = 'checking'
+  const inicializarAuth = async (): Promise<void> => {
+    estadoAuth.value = 'verificando'
     error.value = null
     try {
-      // Verificar si hay token almacenado
       const token = authService.getToken()
-      const storedUser = authService.getStoredUser()
+      const usuarioAlmacenado = authService.getStoredUser()
 
-      if (token && storedUser) {
-        // Intentar validar el token con el endpoint /me
-        const user = await authService.getCurrentUser()
-        currentUser.value = user
-        authStatus.value = 'autenticado'
-        console.info('Sesion validada ', user.email)
+      if (token && usuarioAlmacenado) {
+        const usuario = await authService.getCurrentUser()
+        usuarioActual.value = usuario
+        estadoAuth.value = 'autenticado'
+        console.info('Sesión validada:', usuario.email)
       } else {
-        authStatus.value = 'no autenticado'
+        estadoAuth.value = 'no autenticado'
         console.info('No hay sesión activa')
       }
     } catch (error: any) {
-      console.error('Error validando sesión: ', error.message)
+      console.error('Error validando sesión:', error.message)
       authService.clearAuthData()
-      currentUser.value = null
-      authStatus.value = 'no autenticado'
+      usuarioActual.value = null
+      estadoAuth.value = 'no autenticado'
       error.value = error.message
     }
   }
 
   const login = async (credenciales: LoginCredentials): Promise<boolean> => {
-    authStatus.value = 'checking'
+    estadoAuth.value = 'verificando'
     error.value = null
     try {
-      const authResponse = await authService.login(credenciales)
-      authStatus.value = 'autenticado'
-      console.info('Login exitoso ', authResponse.usuario.email)
+      const respuestaAuth = await authService.login(credenciales)
+      usuarioActual.value = respuestaAuth.usuario
+      estadoAuth.value = 'autenticado'
+      console.info('Login exitoso:', respuestaAuth.usuario.email)
       return true
     } catch (err: any) {
-      console.error('Error en login: ', err.message)
+      console.error('Error en login:', err.message)
       error.value = err.message
-      authStatus.value = 'no autenticado'
+      estadoAuth.value = 'no autenticado'
       return false
     }
   }
 
   const logout = async (): Promise<void> => {
+    console.log('useAuth: Iniciando logout...')
     try {
       await authService.logout()
+      console.log('useAuth: Logout exitoso en servicio')
     } catch (err: any) {
-      console.warn('⚠️ Error durante logout:', err.message)
+      console.warn('useAuth: Error durante logout:', err.message)
     } finally {
-      currentUser.value = null
-      authStatus.value = 'no autenticado'
+      usuarioActual.value = null
+      estadoAuth.value = 'no autenticado'
       error.value = null
-      console.info('Sesión cerrada')
+      console.log('useAuth: Estado actualizado a no autenticado')
     }
   }
 
-  onMounted(() => {})
-
   return {
     // Estado
-    currentUser: computed(() => currentUser.value),
-    authStatus: computed(() => authStatus.value),
+    usuarioActual: computed(() => usuarioActual.value),
+    estadoAuth: computed(() => estadoAuth.value),
     error: computed(() => error.value),
 
     // Computed
-    isAuthenticated,
-    isLoading,
+    estaAutenticado,
+    estaCargando,
 
     // Métodos
-    initializeAuth,
+    inicializarAuth,
     login,
     logout,
   }

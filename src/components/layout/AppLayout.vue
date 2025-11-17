@@ -11,68 +11,73 @@ const appName = import.meta.env.VITE_APP_NAME
 const showHealthCheck = import.meta.env.MODE === 'development'
 
 // Usar el composable de autenticación
-const { isAuthenticated, currentUser, authStatus, initializeAuth } = useAuth()
+const { 
+  estaAutenticado, 
+  usuarioActual, 
+  estadoAuth, 
+  inicializarAuth,
+  logout 
+} = useAuth()
 
-const apiStatus = ref<'checking' | 'connected' | 'error'>('checking')
+const apiStatus = ref<'checking' | 'conectado' | 'error'>('checking')
 
 // Watch para debuggear cambios de autenticación
-watch(isAuthenticated, (newValue) => {
+watch(estaAutenticado, (newValue) => {
   console.log('🔄 Estado de autenticación cambiado:', newValue)
 })
 
-watch(authStatus, (newValue) => {
-  console.log('🔄 authStatus cambiado:', newValue)
+watch(estadoAuth, (newValue) => {
+  console.log('🔄 estadoAuth cambiado:', newValue)
 })
 
-const handleApiStatusChange = (status: 'checking' | 'connected' | 'error') => {
+const handleApiStatusChange = (status: 'checking' | 'conectado' | 'error') => {
   apiStatus.value = status
   console.log('🌐 Estado API:', status)
 }
 
 const handleLoginSuccess = () => {
   console.log('🎉 Evento login-success recibido en Layout')
-  // No necesitamos hacer nada aquí porque el estado reactivo ya se actualizó
 }
 
 const handleLogout = async () => {
   console.log('🚪 Logout iniciado desde Layout')
-  // La lógica de logout está en el composable
+  await logout() //LLAMAR AL MÉTODO logout
 }
 
 // Inicializar autenticación inmediatamente
 onMounted(() => {
   console.log('🚀 Inicializando aplicación...')
-  initializeAuth()
+  inicializarAuth() //LLAMAR AL MÉTODO inicializarAuth
 })
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Header condicional - solo mostrar cuando esté autenticado -->
-    <header v-if="isAuthenticated" class="bg-white shadow-sm border-b">
+    <header v-if="estaAutenticado" class="bg-white shadow-sm border-b">
       <div class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
           <h1 class="text-xl font-bold text-gray-800">{{ appName }}</h1>
-          <UserMenu :user="currentUser" @logout="handleLogout" />
+          <UserMenu :user="usuarioActual" @logout="handleLogout" />
         </div>
       </div>
     </header>
 
     <!-- Contenido principal dinámico -->
-    <main :class="isAuthenticated ? 'container mx-auto px-4 py-6' : ''">
+    <main :class="estaAutenticado ? 'container mx-auto px-4 py-6' : ''">
       <!-- Estado: Verificando autenticación (PRIMERO) -->
-      <div v-if="authStatus === 'checking'">
+      <div v-if="estadoAuth === 'verificando'">
         <LoadingState message="Verificando sesión..." />
       </div>
 
       <!-- Estado: No autenticado -->
-      <div v-else-if="!isAuthenticated">
+      <div v-else-if="!estaAutenticado">
         <LoginView @login-success="handleLoginSuccess" />
       </div>
 
       <!-- Estado: Autenticado -->
-      <div v-else-if="isAuthenticated">
-        <DashboardView :user="currentUser" />
+      <div v-else-if="estaAutenticado">
+        <DashboardView :user="usuarioActual" @logout="handleLogout" />
       </div>
 
       <!-- Estado por defecto -->
