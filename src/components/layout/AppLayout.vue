@@ -1,39 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { onMounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/authStores'
 import HealthCheck from '@/components/common/HealthCheck.vue'
 import LoadingState from '@/components/states/LoadingState.vue'
 import LoginView from '@/components/auth/LoginView.vue'
 import DashboardView from '@/components/dashboard/DashboardView.vue'
 import UserMenu from '@/components/auth/UserMenu.vue'
-import { useAuth } from '@/composables/useAuth'
 
 const appName = import.meta.env.VITE_APP_NAME
 const showHealthCheck = import.meta.env.MODE === 'development'
 
-// Usar el composable de autenticación
-const { 
-  estaAutenticado, 
-  usuarioActual, 
-  estadoAuth, 
-  inicializarAuth,
-  logout 
-} = useAuth()
-
-const apiStatus = ref<'checking' | 'conectado' | 'error'>('checking')
-
-// Watch para debuggear cambios de autenticación
-watch(estaAutenticado, (newValue) => {
-  console.log('🔄 Estado de autenticación cambiado:', newValue)
-})
-
-watch(estadoAuth, (newValue) => {
-  console.log('🔄 estadoAuth cambiado:', newValue)
-})
-
-const handleApiStatusChange = (status: 'checking' | 'conectado' | 'error') => {
-  apiStatus.value = status
-  console.log('🌐 Estado API:', status)
-}
+// Usar store de autenticación
+const authStore = useAuthStore()
+const { estaAutenticado, usuarioActual, estadoAuth } = storeToRefs(authStore)
 
 const handleLoginSuccess = () => {
   console.log('🎉 Evento login-success recibido en Layout')
@@ -41,13 +21,13 @@ const handleLoginSuccess = () => {
 
 const handleLogout = async () => {
   console.log('🚪 Logout iniciado desde Layout')
-  await logout() //LLAMAR AL MÉTODO logout
+  await authStore.logout() //LLAMAR AL MÉTODO logout
 }
 
 // Inicializar autenticación inmediatamente
 onMounted(() => {
   console.log('🚀 Inicializando aplicación...')
-  inicializarAuth() //LLAMAR AL MÉTODO inicializarAuth
+  authStore.inicializarAuth() //LLAMAR AL MÉTODO inicializarAuth
 })
 </script>
 
@@ -92,7 +72,6 @@ onMounted(() => {
       :auto-check="true"
       :show-details="false"
       class="fixed bottom-4 right-4 w-80"
-      @status-change="handleApiStatusChange"
     />
   </div>
 </template>

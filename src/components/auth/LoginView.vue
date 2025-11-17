@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { useAuth } from '@/composables/useAuth'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/authStores'
 
 const appName = import.meta.env.VITE_APP_NAME
 
-// Usar el composable de autenticación
-const { login, estaCargando, error: authError, estaAutenticado } = useAuth()
+// Usar el store de autenticación
+const authStore = useAuthStore()
+const { estaAutenticado, estaCargando, error } = storeToRefs(authStore)
 
 // Agregar después de usar useAuth()
 console.log('🔍 LoginView: Estado inicial -', {
   estaAutenticado: estaAutenticado.value,
   estaCargando: estaCargando.value,
-  error: authError.value
+  error: error.value
 })
 
 const emit = defineEmits<{
@@ -23,10 +25,11 @@ const form = reactive({
   password: '',
 })
 
-const error = ref<string>('')
+const errorLocal = ref<string>('')
 
 // Watch para detectar cuando la autenticación cambia a true
 watch(estaAutenticado, (newValue) => {
+  console.log('🔍 LoginView: Cambio en estaAutenticado -', newValue)
   if (newValue) {
     console.log('Login exitoso - Redirigiendo...')
     emit('login-success')
@@ -34,11 +37,11 @@ watch(estaAutenticado, (newValue) => {
 })
 
 const handleSubmit = async () => {
-  error.value = ''
+  errorLocal.value = ''
 
   console.log('Intentando login...', { email: form.email })
 
-  const success = await login({
+  const success = await authStore.login({
     email: form.email,
     password: form.password,
   })
@@ -47,7 +50,7 @@ const handleSubmit = async () => {
     console.log('Login procesado exitosamente')
     // El watch se encargará de emitir el evento cuando isAuthenticated cambie
   } else {
-    error.value = authError.value || 'Error al iniciar sesión'
+    errorLocal.value = error.value || 'Error al iniciar sesión'
     console.error('Error en login:', error.value)
   }
 }
@@ -93,8 +96,8 @@ const handleSubmit = async () => {
         </div>
 
         <!-- Mensaje de error -->
-        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p class="text-red-700 text-sm">{{ error }}</p>
+        <div v-if="errorLocal" class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p class="text-red-700 text-sm">{{ errorLocal }}</p>
         </div>
 
         <div>

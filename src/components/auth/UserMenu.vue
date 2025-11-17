@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+
+import { useAuthStore } from '@/stores/authStores';
+
 import type { Usuario } from '@/types/auth'
+import { ref, computed } from 'vue';
+
+const authStore = useAuthStore()
 
 interface Props {
   user: Usuario
@@ -23,7 +28,7 @@ const toggleMenu = () => {
 
 const handleLogout = () => {
   emit('logout')
-  isMenuOpen.value = false
+  authStore.logout()
 }
 
 // Cerrar menú al hacer clic fuera
