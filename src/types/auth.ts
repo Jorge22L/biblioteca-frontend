@@ -4,7 +4,7 @@ export interface LoginCredentials {
 }
 
 export interface Usuario {
-  usuario_id: number
+  id: number
   nombre: string
   apellido: string
   email: string

@@ -18,7 +18,7 @@ const appName = import.meta.env.VITE_APP_NAME
 <template>
   <div class="space-y-6">
     <!-- Banner de bienvenida -->
-    <div class="bg-linear-to-bl from-secondary to-fuchsia-500 rounded-lg shadow-lg text-white p-6">
+    <div v-if="user" class="bg-gradient-bl from-secondary to-fuchsia-500 rounded-lg shadow-lg text-white p-6">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold mb-2">¡Bienvenido, {{ user.nombre }}!</h1>
@@ -31,7 +31,7 @@ const appName = import.meta.env.VITE_APP_NAME
     </div>
 
     <!-- Estadísticas rápidas -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div v-if="user" class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-neutral rounded-lg shadow p-4 border-l-4 border-white">
         <div class="flex items-center justify-between">
           <div>
@@ -74,7 +74,7 @@ const appName = import.meta.env.VITE_APP_NAME
       <h2 class="text-xl font-semibold text-neutral-content mb-4">Acciones Disponibles</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <button
-          @click="$emit('navigate', 'usuarios')"
+          @click="navigateTo('usuarios')"
           class="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors text-left group"
         >
           <div
@@ -87,7 +87,7 @@ const appName = import.meta.env.VITE_APP_NAME
         </button>
 
         <button
-          @click="$emit('navigate', 'libros')"
+          @click="navigateTo('libros')"
           class="p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors text-left group"
         >
           <div
@@ -100,7 +100,7 @@ const appName = import.meta.env.VITE_APP_NAME
         </button>
 
         <button
-          @click="$emit('navigate', 'prestamos')"
+          @click="navigateTo('prestamos')"
           class="p-4 border border-gray-200 rounded-lg hover:border-purple-300 transition-colors text-left group"
         >
           <div
@@ -113,7 +113,5 @@ const appName = import.meta.env.VITE_APP_NAME
         </button>
       </div>
     </div>
-
-
   </div>
 </template>

@@ -17,7 +17,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      component: AppLayout, // ✅ LAYOUT COMO COMPONENTE PADRE
+      component: AppLayout,
       meta: { requiresAuth: true },
       children: [
         {
@@ -26,13 +26,18 @@ const router = createRouter({
           component: () => import('@/components/dashboard/DashboardView.vue'),
           meta: { title: 'Dashboard' }
         },
-
+        {
+          path: '/usuarios',
+          name: 'usuarios',
+          component: () => import('@/components/usuarios/UsersView.vue'),
+          meta: { title: 'Usuarios' }
+        }
       ]
     },
     {
       path: '/:pathMatch(.*)*',
       redirect: '/'
-    }
+    },
   ]
 });
 

@@ -28,7 +28,7 @@ export const useUsuarioStore = defineStore('usuarios', {
 
   getters: {
     getUserById: (state) => (id: number) => {
-      return state.users.find(user => user.usuario_id === id)
+      return state.users.find(user => user.id === id)
     }
   },
 
@@ -90,13 +90,13 @@ export const useUsuarioStore = defineStore('usuarios', {
         const updatedUser = await usuarioService.updateUser(id, userData)
 
         // Actualizar en la lista
-        const index = this.users.findIndex(user => user.usuario_id === id)
+        const index = this.users.findIndex(user => user.id === id)
         if (index !== -1) {
           this.users[index] = updatedUser
         }
 
         // Actualizar currentUser si es el mismo
-        if (this.currentUser && this.currentUser.usuario_id === id) {
+        if (this.currentUser && this.currentUser.id === id) {
           this.currentUser = updatedUser
         }
 
@@ -116,13 +116,13 @@ export const useUsuarioStore = defineStore('usuarios', {
         await usuarioService.deleteUser(id)
 
         // Eliminar de la lista
-        const index = this.users.findIndex(user => user.usuario_id === id)
+        const index = this.users.findIndex(user => user.id === id)
         if (index !== -1) {
           this.users.splice(index, 1)
         }
 
         // Limpiar currentUser si es el mismo
-        if (this.currentUser && this.currentUser.usuario_id === id) {
+        if (this.currentUser && this.currentUser.id === id) {
           this.currentUser = null
         }
       } catch (error: any) {
