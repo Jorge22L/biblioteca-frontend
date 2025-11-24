@@ -1,26 +1,18 @@
 <script setup lang="ts">
-import type { Usuario } from '@/types/auth'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStores'
 
-interface Props {
-  user: Usuario
+const authStore = useAuthStore()
+const router = useRouter()
+
+const user = computed(() => authStore.usuarioActual)
+
+const navigateTo = (section: string) => {
+  router.push(`/${section}`)
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  user: () => ({
-    usuario_id: 0,
-    nombre: '',
-    apellido: '',
-    email: '',
-    tipo: ''
-  })
-})
-
-const emit = defineEmits<{
-  navigate: [section: string]
-}>()
-
 const appName = import.meta.env.VITE_APP_NAME
-const apiUrl = import.meta.env.VITE_APP_URL
 </script>
 
 <template>
