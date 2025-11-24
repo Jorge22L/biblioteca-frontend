@@ -57,10 +57,10 @@ const handleSubmit = async () => {
 </script>
 <template>
   <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+    <div class="max-w-md w-full space-y-8 bg-base-100 p-6 rounded-lg">
       <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Iniciar Sesión</h2>
-        <p class="mt-2 text-center text-sm text-gray-600">Accede a {{ appName }}</p>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-white">Iniciar Sesión</h2>
+        <p class="mt-2 text-center text-sm text-white">Accede a {{ appName }}</p>
       </div>
 
       <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
@@ -74,7 +74,7 @@ const handleSubmit = async () => {
               type="email"
               autocomplete="email"
               required
-              class="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              class="relative block w-full px-3 py-2 border border-gray-300 placeholder-white text-white rounded-lg focus:outline-white focus:ring-white focus:border-white focus:z-10 transition-all ease-in-out duration-500"
               placeholder="Correo electrónico"
               :disabled="estaCargando"
             />
@@ -88,7 +88,7 @@ const handleSubmit = async () => {
               type="password"
               autocomplete="current-password"
               required
-              class="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              class="relative block w-full px-3 py-2 border border-gray-300 placeholder-white text-white rounded-lg focus:outline-white focus:ring-white focus:border-white focus:z-10 transition-all ease-in-out duration-500"
               placeholder="Contraseña"
               :disabled="estaCargando"
             />
@@ -96,15 +96,15 @@ const handleSubmit = async () => {
         </div>
 
         <!-- Mensaje de error -->
-        <div v-if="errorLocal" class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p class="text-red-700 text-sm">{{ errorLocal }}</p>
+        <div v-if="errorLocal" class="bg-red-50 border border-error rounded-lg p-4">
+          <p class="text-error-content text-sm">{{ errorLocal }}</p>
         </div>
 
         <div>
           <button
             type="submit"
             :disabled="estaCargando"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-warning-content bg-warning hover:bg-warning-content hover:text-warning focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:bg-info disabled:cursor-not-allowed transition-colors"
           >
             <span v-if="estaCargando" class="flex items-center">
               <div

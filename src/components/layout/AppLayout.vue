@@ -32,12 +32,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-base-300">
     <!-- Header condicional - solo mostrar cuando esté autenticado -->
-    <header v-if="estaAutenticado" class="bg-white shadow-sm border-b">
+    <header v-if="estaAutenticado" class="bg-neutral shadow-sm border-b">
       <div class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
-          <h1 class="text-xl font-bold text-gray-800">{{ appName }}</h1>
+          <h1 class="text-xl font-bold text-neutral-content">{{ appName }}</h1>
           <UserMenu :user="usuarioActual" @logout="handleLogout" />
         </div>
       </div>
@@ -67,11 +67,11 @@ onMounted(() => {
     </main>
 
     <!-- Health Check separado - no bloquea la UI -->
-    <HealthCheck
+    <!-- <HealthCheck
       v-if="showHealthCheck"
       :auto-check="true"
       :show-details="false"
       class="fixed bottom-4 right-4 w-80"
-    />
+    /> -->
   </div>
 </template>

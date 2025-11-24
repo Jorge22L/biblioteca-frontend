@@ -52,7 +52,7 @@ if (typeof window !== 'undefined') {
       class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 rounded-full px-3 py-2 transition-colors"
     >
       <div
-        class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium"
+        class="w-8 h-8 bg-info rounded-full flex items-center justify-center text-info-content text-sm font-medium"
       >
         {{ userInitials }}
       </div>
@@ -80,7 +80,7 @@ if (typeof window !== 'undefined') {
 
       <button
         @click="handleLogout"
-        class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+        class="w-full text-left px-4 py-2 text-sm text-error hover:bg-red-100 flex items-center gap-2"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
