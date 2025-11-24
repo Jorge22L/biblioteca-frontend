@@ -5,7 +5,15 @@ interface Props {
   user: Usuario
 }
 
-defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  user: () => ({
+    usuario_id: 0,
+    nombre: '',
+    apellido: '',
+    email: '',
+    tipo: ''
+  })
+})
 
 const emit = defineEmits<{
   navigate: [section: string]

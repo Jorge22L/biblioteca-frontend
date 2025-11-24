@@ -8,10 +8,20 @@ import { ref, computed } from 'vue';
 const authStore = useAuthStore()
 
 interface Props {
-  user: Usuario
+  user?: Usuario
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  user: () => ({
+    usuario_id: 0,
+    nombre: '',
+    apellido: '',
+    email: '',
+    tipo: ''
+  })
+})
+
+
 const emit = defineEmits<{
   logout: []
 }>()
@@ -19,7 +29,7 @@ const emit = defineEmits<{
 const isMenuOpen = ref(false)
 
 const userInitials = computed(() => {
-  return `${props.user.nombre.charAt(0)}${props.user.apellido.charAt(0)}`.toUpperCase()
+  return `${props.user?.nombre.charAt(0)}${props.user?.apellido.charAt(0)}`.toUpperCase()
 })
 
 const toggleMenu = () => {
@@ -56,7 +66,7 @@ if (typeof window !== 'undefined') {
       >
         {{ userInitials }}
       </div>
-      <span class="text-sm text-gray-700 hidden sm:block">{{ user.nombre }}</span>
+      <span class="text-sm text-gray-700 hidden sm:block">{{ user?.nombre }}</span>
       <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
@@ -73,9 +83,9 @@ if (typeof window !== 'undefined') {
       class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
     >
       <div class="px-4 py-2 border-b border-gray-100">
-        <p class="text-sm font-medium text-gray-900">{{ user.nombre }} {{ user.apellido }}</p>
-        <p class="text-xs text-gray-500 truncate">{{ user.email }}</p>
-        <p class="text-xs text-gray-400 mt-1">Tipo: {{ user.tipo }}</p>
+        <p class="text-sm font-medium text-gray-900">{{ user?.nombre }} {{ user?.apellido }}</p>
+        <p class="text-xs text-gray-500 truncate">{{ user?.email }}</p>
+        <p class="text-xs text-gray-400 mt-1">Tipo: {{ user?.tipo }}</p>
       </div>
 
       <button

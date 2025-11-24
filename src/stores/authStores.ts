@@ -6,7 +6,8 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         usuarioActual: null as Usuario | null,
         estadoAuth: 'inactivo' as 'inactivo' | 'verificando' | 'autenticado' | 'no autenticado',
-        error: null as string | null
+        error: null as string | null,
+        rutaRedireccion: '/dashboard' as string
     }),
     getters: {
         estaAutenticado: (state) => state.estadoAuth === 'autenticado',
@@ -49,6 +50,9 @@ export const useAuthStore = defineStore('auth', {
                 this.usuarioActual = respuestaAuth.usuario
                 this.estadoAuth = 'autenticado'
                 console.info('Login exitoso: ', respuestaAuth.usuario.email)
+
+                await this.procesarRedireccionPostLogin()
+
                 return true
             }catch(error: any){
                 console.error('Error en login: ', error.message)
@@ -70,6 +74,21 @@ export const useAuthStore = defineStore('auth', {
                 this.estadoAuth = 'no autenticado'
                 console.log('AuthStore: Estado actualizado')
             }
+        },
+
+        async procesarRedireccionPostLogin(){
+          await new Promise(resolve => setTimeout(resolve, 50))
+
+          const router = (await import('@/router')).default
+          const rutaDestino = this.rutaRedireccion || '/dashboard'
+
+          router.push(rutaDestino)
+
+          this.rutaRedireccion = '/dashboard'
+        },
+
+        establecerRutaRedireccion(ruta: string){
+            this.rutaRedireccion = ruta
         }
     }
 })

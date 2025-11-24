@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useAuthStore } from '@/stores/authStores'
+import { useAuthStore } from '@/stores/authStores' // ✅ CORREGIR: authStore
 
 const appName = import.meta.env.VITE_APP_NAME
+const router = useRouter()
 
 // Usar el store de autenticación
 const authStore = useAuthStore()
 const { estaAutenticado, estaCargando, error } = storeToRefs(authStore)
 
-// Agregar después de usar useAuth()
+// Debug inicial
 console.log('🔍 LoginView: Estado inicial -', {
   estaAutenticado: estaAutenticado.value,
   estaCargando: estaCargando.value,
   error: error.value
 })
-
-const emit = defineEmits<{
-  'login-success': []
-}>()
 
 const form = reactive({
   email: '',
@@ -27,36 +25,27 @@ const form = reactive({
 
 const errorLocal = ref<string>('')
 
-// Watch para detectar cuando la autenticación cambia a true
-watch(estaAutenticado, (newValue) => {
-  console.log('🔍 LoginView: Cambio en estaAutenticado -', newValue)
-  if (newValue) {
-    console.log('Login exitoso - Redirigiendo...')
-    emit('login-success')
-  }
-})
-
 const handleSubmit = async () => {
   errorLocal.value = ''
 
-  console.log('Intentando login...', { email: form.email })
+  console.log('🔐 LoginView: Intentando login...', { email: form.email })
 
-  const success = await authStore.login({
+  const exito = await authStore.login({
     email: form.email,
     password: form.password,
   })
 
-  if (success) {
-    console.log('Login procesado exitosamente')
-    // El watch se encargará de emitir el evento cuando isAuthenticated cambie
+  if (exito) {
+    console.log('✅ LoginView: Login procesado exitosamente')
   } else {
     errorLocal.value = error.value || 'Error al iniciar sesión'
-    console.error('Error en login:', error.value)
+    console.error('❌ LoginView: Error en login:', error.value)
   }
 }
 </script>
+
 <template>
-  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen flex items-center bg-base-200 justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-base-100 p-6 rounded-lg">
       <div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-white">Iniciar Sesión</h2>
