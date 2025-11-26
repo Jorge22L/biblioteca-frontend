@@ -1,6 +1,7 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "@/stores/authStores";
-import AppLayout from "@/components/layout/AppLayout.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/authStores'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import UserCreateView from '@/components/usuarios/UserCreateView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,8 +13,8 @@ const router = createRouter({
       meta: {
         title: 'Iniciar Sesión',
         requiresGuest: true,
-        layout: 'empty' // Sin layout para login
-      }
+        layout: 'empty', // Sin layout para login
+      },
     },
     {
       path: '/',
@@ -24,47 +25,53 @@ const router = createRouter({
           path: '',
           name: 'dashboard',
           component: () => import('@/components/dashboard/DashboardView.vue'),
-          meta: { title: 'Dashboard' }
+          meta: { title: 'Dashboard' },
         },
         {
           path: '/usuarios',
           name: 'usuarios',
           component: () => import('@/components/usuarios/UsersView.vue'),
-          meta: { title: 'Usuarios' }
-        }
-      ]
+          meta: { title: 'Usuarios' },
+        },
+        {
+          path: '/usuarios/crear',
+          name: 'crearUsuario',
+          component: UserCreateView,
+          meta: { title: 'Crear Usuario' },
+        },
+      ],
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/'
+      redirect: '/',
     },
-  ]
-});
+  ],
+})
 
 // Protección de rutas
 router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
   if (to.meta.title) {
-    document.title = `${to.meta.title} - Biblioteca Digital`;
+    document.title = `${to.meta.title} - Biblioteca Digital`
   }
 
   // Ruta que requiere autenticación
   if (to.meta.requiresAuth && !authStore.estaAutenticado) {
-    console.log('🛡️ Ruta protegida, guardando redirección:', to.path);
-    authStore.establecerRutaRedireccion(to.path);
-    next('/login');
-    return;
+    console.log('🛡️ Ruta protegida, guardando redirección:', to.path)
+    authStore.establecerRutaRedireccion(to.path)
+    next('/login')
+    return
   }
 
   // Ruta para invitados (cuando ya está autenticado)
   if (to.meta.requiresGuest && authStore.estaAutenticado) {
-    console.log('🛡️ Ya autenticado, redirigiendo al dashboard');
-    next('/');
-    return;
+    console.log('🛡️ Ya autenticado, redirigiendo al dashboard')
+    next('/')
+    return
   }
 
-  next();
-});
+  next()
+})
 
-export default router;
+export default router
